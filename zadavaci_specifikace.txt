@@ -1,0 +1,20 @@
+Úkol číslo 3 – Zadání:
+- Spring boot (backend)
+- Dart, Flutter (frontend)
+- MySQL (jedna z možností)
+Myšlenka projektu vznikla při vymýšlení co dělat..
+Požadavky:
+- Sledování akcí v daném časovém okamžiku (ok)
+- Přidávání dalších akcí
+- Zrušení akcí
+- Možnost přihlásit a odhlásit se na/z akci
+- Filtrování mezi akcemi (různé druhy akcí (Koncerty, párty, workshopy..),
+místo)
+- Přidávat komentáře
+- Registrace pro uživatele, poté možnost přidávání, rušení, atd
+Z databáze by mělo být schopné získat:
+Akce pro daný den,
+Počet zapsaných učastníků
+Získat informace o místě konání
+Tabulky: Akce Kategorie Pořadatel Místo Uživatel RoleUživatele Privilegie Komentář
+
