@@ -1,3 +1,22 @@
+Zadání projekt – Hello FIM
+Webová aplikace na sledování akcí se zrodila po zkušenosti
+, kdy nám nějaká taková aplikace chyběla na oslavě.
+
+Aplikaci budou používat nejčastěji dospělí lidé a bude dostupná na webu.
+
+Jedná se o nápad, který ještě nebyl organizací realizován.
+Aplikace by měla poskytnout základní informace o akcích ve vybraný den.
+
+Akce bude popsána dnem konání, pořadatelem, místem pořádání
+(místo bude moci být jak adresa, tak například souřadnice),
+časem začátku a konce, kategorii, vhodností pro určité lidi a popisem.
+
+Akce se bude dělit do několika kategorií, kategorie mohou být například koncert, festival, párty, workshop, …). Akce budou moci být vyhledatelné podle daných atributů.
+Součástí bude možnost registrace účtu a následné přihlašování. Uživatel při registraci bude nucen zadat uživatelské jméno, email, telefon, rok narození a heslo. Hlavním důvodem pro založení účtu je možnost zakládání vlastních akcí. Ty budou vystaveny pod jménem uživatele. Další plusy používání účtu bude možnost rušit uživatelem pořádané akce, přidávat komentáře k dalším akcím, přihlašování na akce (účastním se). Aplikace bude podporovat i roli administrátora. Tím pádem aplikace bude muset uchovávat informace o privilegiích jednotlivých uživatelů.
+Z technologického pohledu bude aplikace používat Javu s frameworkem Spring Boot, Dart/flutter a databázový systém postgreSQL. Frontend bude řešen pomocí Dartu s flutterem, jež jsme zvolili hlavně kvůli jejich výhodě využitelnosti na více platformách (web, ios, android, macos, windows). To by v budoucnu umožnilo celkem snadné spuštění služby například jako mobilní aplikace. Na backendu bude využita Java s frameworkem Spring Boot. Využit bude hlavně z důvodu velké rozšířenosti v praxi. Spring Boot bude komunikovat s databázovým systémem PostgreSQL, který jsme vybrali hlavně kvůli jeho současné oblíbenosti a podpoře mezi vývojáři.
+
+
+
 Úkol číslo 3 – Zadání:
 - Spring boot (backend)
 - Dart, Flutter (frontend)
@@ -17,4 +36,95 @@ Akce pro daný den,
 Počet zapsaných učastníků
 Získat informace o místě konání
 Tabulky: Akce Kategorie Pořadatel Místo Uživatel RoleUživatele Privilegie Komentář
+
+
+
+Použité technologie:
+- back-end : Spring boot (java)
+- front-end : flutter/dart
+- back-end-deployment : firebase web
+- front-end-deployment : firebase web, firebase app distribution (android) // ios je slozitejsi, nemam dev certifikaci
+- databaze : mongodb?
+https://www.mongodb.com/compatibility/spring-boot // pracoval jsme s ním jednou a líbí se mi to víc než nějaký mysql, ale jak budete chtit, kouknete na to
+
+===
+Požadavky projektu:
+- Uživatelské prostředí -> registrace uživatele, login uživatele, editace uživatele, správa uživatelů a dat (admin)
+- Uživatelské akce ->
+   - jako uživatel chci vidět akce na daný den
+   - jako uživatel chci vyhledat akce podle jejich kategorie
+   - jako uživatel chci vidět detail akce
+   - jako uživatel se chci přidat na akci
+   - jako uživatel chci zrušit účast na akci
+   - jako uživatel chci zanechat komentář na akci
+   - jako uživatel chci vytvořit novou akci
+   - jako uživatel chci editovat svou akci
+   - jako uživatel chci odstranit svou akci
+
+Detail akce
+ - místo konání : Místo (model)
+ - čas konání : Date
+ - stav // možná není nutné evidovat to, jde to poznat podle času konání, ale pro stav zrušená bych to možná evidoval pokud budeme chtít zrušené někde evidovat...
+ - kategorie : Kategorie (model)
+ - název
+ - harmonogram ? popis akce
+ - podmínky pro účast
+    - maximální počet účastníků
+    - minimální věk účastníka
+ - účastníci
+ - komentáře
+
+ Komentář
+ - uživatel
+ - akce
+ - obsah komentáře
+ - čas
+
+ Uživatel
+  - login username
+  - password
+  - jméno
+  - příjmení
+  - rok narození
+  - pohlaví
+  - email
+  - telefon?
+  - informace o uživateli
+  - uplynulé akce
+  - následují akce
+  - probíhající akce
+
+ Asi to jde rozepisovat dál, každopádně když u uživatele píšu uplynulé akce atd, to beru jako pohledy a nebude to součást samotného modelu.
+
+co se týče databáze samotné :
+
+ min. 10 tabulek navrženého datového modelu;
+ - uživatel (login info)
+ - uživatelské informace (můžeme modelovat podle mě separátně, ale nevím jak moc logické to je, ale šlo by to mít v separátní tabulce)
+ - akce
+ - komentář
+ - kategorie
+ - místo (něco jako adresa to může být, asi stačí)
+ - harmonogram (bude obsahovat události)
+ - událost (časový interval od do, plus název a popis)
+ - email (validace můžou být v databázi)
+ --- zkuste prosím vymyslet další :/
+
+ min. 2 číselníky – viz. například https://cs.wikipedia.org/wiki/%C4%8C%C3%ADseln%C3%ADk
+  - pohlaví :D (můžeme udělat třeba těch debilních 50 pohlaví a máme číselník :D)
+  - kategorie akce
+  - stav akce (probíhající, uplynulá, následující, zrušená, nepotvrzená, potvrzená)
+  - můžeme udělat třeba zájmy uživatele nebo něco takového jako číselník
+  - kraje (můžeme tak nějak debilně filtrovat akce v těch pohledech když budeme mít kraje, akce ve stejném kraji budou nahoře)
+ min. 3 pohledy – logicky využité, různého typu;
+  - seznam uplynulých akcí
+  - seznam akcí na daný den seřazený podle lokality
+  - seznam akcí na uživatele (zde můžeme rozdělit podle typu akce
+ min. 2 funkce různého typu;
+  - těch bude tři prdele, get funkce, update funkce, delete funkce
+ min. 3 procedury;
+   - validace - podle mě bohatě stačí, když budeme vše validovat tak na každou validaci se vytvoří procedura
+ min. 2 triggery
+ - jestli tomu rozumím správně tak to je vlastně nějaká automatická procedura.
+    - bylo by cool udělat při vytvoření akce, například by to hledalo vhodné kandidáty pro akci a těm by se akce doporučila (jen nápad)
 

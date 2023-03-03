@@ -1,23 +1,28 @@
 import 'dart:io';
+import 'package:dbs_2_front_end/utils/app_typography.dart';
+import 'package:dbs_2_front_end/utils/color_schemes.dart';
+import 'package:dbs_2_front_end/utils/my_http_overrides.dart';
+import 'package:dbs_2_front_end/views/app_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'app_pages.dart';
-import 'app_theme.dart';
 
 import 'package:flutter_web_plugins/url_strategy.dart';
 
-import 'firebase_options.dart';
+import 'controller/app_controller.dart';
+import 'utils/firebase_options.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
 
-  if(kIsWeb) {
+  if (kIsWeb) {
     usePathUrlStrategy();
   }
+
+  Get.put(AppController(), permanent: true);
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -32,19 +37,16 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'dbs project',
-      getPages: appPages,
-      theme: themeData,
-      initialRoute: '/',
+      title: 'DBS project',
+      theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: lightColorScheme,
+          textTheme: appMaterialLightPrimaryTextTheme),
+      darkTheme: ThemeData(
+          useMaterial3: true,
+          colorScheme: darkColorScheme,
+          textTheme: appMateriaDarkTextTheme),
+      home: const HomePage(),
     );
-  }
-}
-
-class MyHttpOverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
   }
 }
