@@ -17,14 +17,11 @@ class WebHeadingView extends GetView<AppController> {
       child: Row(
         children: [
           Center(
-            child: Obx(
-                  () =>
-                  Text(
-                    controller.pageTitle.value.toUpperCase(),
-                    style: Get.textTheme.headlineLarge!.merge(TextStyle(
-                        color: Get.theme.colorScheme.onPrimaryContainer,
-                        letterSpacing: 2)),
-                  ),
+            child: Text(
+              controller.defaultPageTitle,
+              style: Get.textTheme.headlineLarge!.merge(TextStyle(
+                  color: Get.theme.colorScheme.onPrimaryContainer,
+                  letterSpacing: 2)),
             ),
           ),
           const Spacer(),
@@ -43,30 +40,55 @@ class WebMenu extends StatelessWidget {
     return GetBuilder<AppController>(
       id: 'menu',
       builder: (AppController controller) {
-        return Row(
-          children: [for (int i = 0; i < controller.menuItems.length; i++)
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 15,
-                right: 15,
-              ),
-              child:
-              WebMenuItemWidget(item: controller.menuItems[i], selected:
-              controller.selectedMenuItem.value == controller.menuItems[i],
-              ),
-            ),],
+        return Obx(
+          () => Row(
+            children: controller.isUserLoggedIn.value
+                ? [
+                    for (int i = 0;
+                        i < controller.menuItemsForLoggedInUser.length;
+                        i++)
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 15,
+                          right: 15,
+                        ),
+                        child: WebMenuItemWidget(
+                          item: controller.menuItemsForLoggedInUser[i],
+                          selected: controller.selectedMenuItem.value ==
+                              controller.menuItemsForLoggedInUser[i],
+                        ),
+                      )
+                  ]
+                : [
+                    for (int i = 0;
+                        i < controller.menuItemsForNotLoggedInUser.length;
+                        i++)
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 15,
+                          right: 15,
+                        ),
+                        child: WebMenuItemWidget(
+                          item: controller.menuItemsForNotLoggedInUser[i],
+                          selected: controller.selectedMenuItem.value ==
+                              controller.menuItemsForNotLoggedInUser[i],
+                        ),
+                      ),
+                  ],
+          ),
         );
       },
     );
   }
 }
 
-
 class WebMenuItemWidget extends StatefulWidget {
   final MenuItem item;
   final bool selected;
 
-  const WebMenuItemWidget({Key? key, required this.item, required this.selected}) : super(key: key);
+  const WebMenuItemWidget(
+      {Key? key, required this.item, required this.selected})
+      : super(key: key);
 
   @override
   State<WebMenuItemWidget> createState() => _WebMenuItemWidgetState();
@@ -87,19 +109,33 @@ class _WebMenuItemWidgetState extends State<WebMenuItemWidget> {
       },
       onHover: (bool hover) => setState(() => this.hover = hover),
       child: AnimatedContainer(
-        width:  150,
-        height: 80,
+        width: hover ? 150 : 120,
+        height: hover ? 80 : 60,
         padding: hover ? const EdgeInsets.all(4) : const EdgeInsets.all(12),
         duration: const Duration(milliseconds: 500),
         child: Center(
-          child: false ? Text(
-    describeEnum(widget.item),
-    style: Get.textTheme.titleLarge!.merge(const TextStyle(fontWeight: FontWeight.bold, decoration: TextDecoration.underline)),): Text(
-    describeEnum(widget.item),
-    style: Get.textTheme.titleLarge,)
-
+          child: widget.selected
+              ? Text(
+                  widget.item.getMenuItemDisplayName(),
+                  style: Get.textTheme.titleLarge!.merge(
+                    const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.underline),
+                  ),
+                )
+              : hover
+                  ? Text(
+                      widget.item.getMenuItemDisplayName(),
+                      style: Get.textTheme.titleLarge!.merge(
+                        const TextStyle(decoration: TextDecoration.underline),
+                      ),
+                    )
+                  : Text(
+                      widget.item.getMenuItemDisplayName(),
+                      style: Get.textTheme.titleLarge,
+                    ),
+        ),
       ),
-    ),
     );
   }
 }

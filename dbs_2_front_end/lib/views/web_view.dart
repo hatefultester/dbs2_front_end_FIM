@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../controller/app_controller.dart';
-import '../pages/dashboard_page.dart';
-import '../utils/menu_item.dart';
 import 'web_content_view.dart';
 import 'web_heading_view.dart';
 

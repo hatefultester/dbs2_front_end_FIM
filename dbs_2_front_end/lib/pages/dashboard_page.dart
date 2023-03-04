@@ -14,53 +14,89 @@ class DashboardPage extends GetView<DashboardController> {
   Widget build(BuildContext context) {
     final controller = Get.put(DashboardController());
     return Center(
-        child: SizedBox(
-        width: AppController.to.getDeviceScreenType() !=
-        DeviceScreenType.mobile ? 600 : 300, child: Column(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+          width: AppController.to.getDeviceScreenType() !=
+          DeviceScreenType.mobile ? 600 : double.infinity, child: Column(
     children: [
-
       /// dashboard list view;
       ObxOnly(
-        only: controller.isSearch,
-        child: Obx(
-            () => Column(
+          only: controller.isSearch,
+          child: Obx(
+              () => Column(
+              children:
+                 [
 
-            children:
-               [Row(
-                 children: [
-                   Text('List of actions', style: Get.textTheme.titleMedium,),const Spacer(),
-                   DashboardPlusIconButton(),
-                 ],
-               ),
+                   InputLine(textValue: 'Search', controller: controller.searchTextController, toggleActionEnabled: true, toggleAction: () { controller.handleSearch();}),
+                   Row(
+                   children: [
+                     Text('List of actions', style: Get.textTheme.titleMedium,),const Spacer(),
+                     const DashboardPlusIconButton(),
+                   ],
+                 ),
 
-                 Column(children: [
-                 for(int i = 0; i < controller.length.value; i++) Column(
-                children: [
-                  EventListTile(i),
-                  const Divider(),
-                ],
-              )],),
-            ],
+                   Column(children: [
+                   for(int i = 0; i < controller.length.value; i++) Column(
+                  children: [
+                    EventListTile(i),
+                    const Divider(),
+                  ],
+                )],),
+              ],
+            ),
           ),
-        ),
       ),
 
       /// dashboard list view;
       ObxOnly(
-        only: controller.isDetail,
-        child: Column(
-          children: [
-            Center(child: Obx(
-            () => Text(
-                "${(controller.detailPageIndex.value+1).toString()} Detail screen",
-                style: Get.textTheme.titleMedium,
+          only: controller.isDetail,
+          child: Column(
+            children: [
+              Center(child: Obx(
+              () => Text(
+                  "${(controller.detailPageIndex.value+1).toString()} Detail screen",
+                  style: Get.textTheme.titleMedium,
+                ),
+              ),),
+              const Divider(),
+
+              Text(controller.lipsum),
+
+              /// Submit button
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: SizedBox(
+                    width: 300,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        controller.handleSwitchToSearch();
+                      },
+                      child:
+                     const Text('Go back'),
+                    ),
+                  ),
+                ),
               ),
-            ),),
-            const Divider(),
+            ],
+          ),
+      ),
 
-            Text(controller.lipsum),
-
-            /// Submit button
+      ObxOnly(
+            only: controller.isCreate,
+            child: Column(
+          children: [
+            InputLine(textValue: 'Name', controller: controller.nameTextController,),
+            InputLine(textValue: 'description', controller : controller.descriptionTextController,),
+            InputLine(textValue: 'Start date', controller: controller.startDateTextController, disableEdit: true, onTap: () => {
+              controller.handleSelectStartDate(),
+            },),
+            InputLine(textValue: 'End date', controller: controller.endDateTextController, disableEdit: true, onTap: () => {
+              controller.handleSelectEndDate(),
+            },),
+            const DropdownLine(textValue: 'category', disableEdit: false,),/// Submit button
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Center(
@@ -69,46 +105,26 @@ class DashboardPage extends GetView<DashboardController> {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
-                      controller.handleSwitchToSearch();
+                      controller.handleAddNewAction();
                     },
                     child:
-                   const Text('Go back'),
+                    const Text('Add event to list'),
                   ),
                 ),
               ),
             ),
+
+            ObxOnly(
+                only: controller.showEndDateValidationMessage,
+                child: const Center(child: Text(
+              "Your end date was changed because start day must be before your end date"
+            ),))
           ],
-        ),
-      ),
-      
-      ObxOnly(
-          only: controller.isCreate,
-          child: Column(
-        children: [
-          InputLine(textValue: 'Name', controller: controller.nameTextController,),
-          InputLine(textValue: 'description', controller : controller.descriptionTextController,),
-          const DropdownLine(textValue: 'category', disableEdit: false,),/// Submit button
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Center(
-              child: SizedBox(
-                width: 300,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    controller.handleAddNewAction();
-                  },
-                  child:
-                  const Text('Add event to list'),
-                ),
-              ),
-            ),
-          ),
-        ],
       ))
 
     ],
-    ),),);
+    ),),
+        ),);
   }
 }
 
@@ -121,9 +137,9 @@ class EventListTile extends GetView<DashboardController> {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text('${(i+1).toString()} Event'),
-      subtitle: Text('interesting event'),
-      leading: Icon(Icons.event),
-      trailing: Icon(Icons.arrow_right_sharp),
+      subtitle: const Text('interesting event'),
+      leading: const Icon(Icons.event),
+      trailing: const Icon(Icons.arrow_right_sharp),
       onTap: () {
         controller.handleSwitchToDetail(i);
       },
@@ -152,6 +168,5 @@ class DashboardPlusIconButton extends StatelessWidget {
         ),
       ),
     );
-
   }
 }

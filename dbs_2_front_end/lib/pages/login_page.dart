@@ -6,6 +6,7 @@ import 'package:responsive_builder/responsive_builder.dart';
 
 import '../controller/app_controller.dart';
 import '../controller/login_controller.dart';
+import '../widgets/validation_text.dart';
 
 class LoginPage extends GetView<LoginController> {
   const LoginPage({Key? key}) : super(key: key);
@@ -21,6 +22,7 @@ class LoginPage extends GetView<LoginController> {
         child: Column(
           children: [
             /// title of form
+            AppController.to.getDeviceScreenType() == DeviceScreenType.mobile ? const SizedBox.shrink() :
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Obx(() => Text(controller.state.value.title(),
@@ -49,7 +51,7 @@ class LoginPage extends GetView<LoginController> {
               not: controller.isForgotPassword,
               child: Column(
                 children: [
-                  InputLine(textValue: 'Password', controller : controller.passwordTextController),
+                  InputLine(obscureText: true, textValue: 'Password', controller : controller.passwordTextController),
                 ],
               ),
             ),
@@ -57,7 +59,7 @@ class LoginPage extends GetView<LoginController> {
             /// password again button
             ObxOnly(
               only: controller.isRegistration,
-              child: InputLine(textValue: 'Password again', controller: controller.passwordAgainTextController,),
+              child: InputLine(obscureText: true,textValue: 'Password again', controller: controller.passwordAgainTextController,),
             ),
 
             /// Registration text link
@@ -148,7 +150,7 @@ class LoginPage extends GetView<LoginController> {
                 child: Padding(
                   padding: EdgeInsets.all(8.0),
                   child:
-                      Text('Your registration was successful, now you can login'),
+                      SuccessMessage('Your registration was successful, now you can login'),
                 ),
               ),
             ),
@@ -159,7 +161,7 @@ class LoginPage extends GetView<LoginController> {
               child: const Center(
                 child: Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Text(
+                  child: ErrorMessage(
                       "You can't login yet, because our amazing spring boot backend is not implemented yet"),
                 ),
               ),
@@ -171,7 +173,7 @@ class LoginPage extends GetView<LoginController> {
               child: const Center(
                 child: Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Text(
+                  child: SuccessMessage(
                       "if this email exists in our database we will maybe send you reset link, but probably not"),
                 ),
               ),
@@ -186,13 +188,19 @@ class LoginPage extends GetView<LoginController> {
 class InputLine extends StatelessWidget {
   final String textValue;
 
+  final VoidCallback? toggleAction;
+
   final TextEditingController controller;
 
   final GestureTapCallback? onTap;
 
   final bool disableEdit;
 
-  const InputLine({Key? key, required this.textValue, required this.controller, this.onTap, this.disableEdit = false}) : super(key: key);
+  final bool obscureText;
+
+  final bool toggleActionEnabled;
+
+  const InputLine({Key? key, this.toggleAction, this.toggleActionEnabled = false, this.obscureText = false, required this.textValue, required this.controller, this.onTap, this.disableEdit = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -224,9 +232,11 @@ class InputLine extends StatelessWidget {
               SizedBox(
                   width: AppController.to.getDeviceScreenType() ==
                           DeviceScreenType.mobile
-                      ? 300
-                      : 450,
+                      ? (!toggleActionEnabled ? 300 : 250)
+                      : (!toggleActionEnabled ? 450 : 400),
                   child: TextField(
+                    obscureText: obscureText,
+                    obscuringCharacter: "*",
                     enabled: !disableEdit,
                     onTap: onTap,
                     controller: controller,
@@ -249,7 +259,7 @@ class InputLine extends StatelessWidget {
                       filled: true,
                     ),
                   ),),
-
+              Visibility(visible: toggleActionEnabled, child: IconButton(icon: const Icon(Icons.search_rounded), onPressed: toggleAction,),)
             ],
           ),
         ),
@@ -326,23 +336,5 @@ class DropdownLine extends StatelessWidget {
       ),
     );
 
-    return  DropdownButtonHideUnderline(
-      child: DropdownButton2(
-        isExpanded: true,
-        items: stringCategoryOptions
-            .map(
-              (item) => DropdownMenuItem<String>(
-            value: item,
-            child: Text(
-              item,
-            ),
-          ),
-        )
-            .toList(),
-        value: stringCategoryOptions.first,
-        onChanged: (value) {
-        },
-      ),
-    );
   }
 }

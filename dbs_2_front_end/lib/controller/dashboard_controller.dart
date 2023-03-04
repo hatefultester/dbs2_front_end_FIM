@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_material_pickers/helpers/show_date_picker.dart';
 import 'package:get/get.dart';
 
 import 'app_controller.dart';
@@ -21,8 +22,59 @@ class DashboardController extends GetxController {
   RxBool isCreate = false.obs;
   RxBool isDetail = false.obs;
 
+  RxBool showEndDateValidationMessage = false.obs;
+
+  final DateTime now = DateTime.now();
+
+  DateTime startDate = DateTime.now();
+  DateTime endDate = DateTime.now().add(const Duration(days: 2),);
+
   TextEditingController nameTextController = TextEditingController();
   TextEditingController descriptionTextController = TextEditingController();
+  TextEditingController startDateTextController = TextEditingController();
+  TextEditingController endDateTextController = TextEditingController();
+
+  TextEditingController searchTextController = TextEditingController();
+
+  handleSearch() async {
+    AppController.to.displayCircularProgressIndicator.value = true;
+    await Future.delayed(const Duration(seconds: 1));
+    AppController.to.displayCircularProgressIndicator.value = false;
+    handleSwitchToSearch();
+  }
+
+  handleSelectStartDate() async {
+    await showMaterialDatePicker(
+      title: 'Select date',
+      firstDate: now,
+      lastDate: DateTime(2030),
+      context: Get.context!,
+      selectedDate: startDate,
+      onChanged: (value) => {
+        startDate = value,
+        if (endDate.isBefore(startDate)) {
+          endDate = startDate.add(const Duration(hours: 1),),
+          endDateTextController.text = endDate.toString(),
+          showEndDateValidationMessage.value = true,
+        },
+        startDateTextController.text = value.toString(),
+      },
+    );
+  }
+
+  handleSelectEndDate() async {
+    await showMaterialDatePicker(
+      title: 'Select date',
+      firstDate: startDate.add(const Duration(hours: 1),),
+      lastDate: DateTime(2030),
+      context: Get.context!,
+      selectedDate: endDate,
+      onChanged: (value) => {
+        endDate = value,
+        endDateTextController.text = value.toString(),
+      },
+    );
+  }
 
   handleSwitchToDetail(int i) {
     state.value = DashboardViewState.detail;
@@ -35,7 +87,7 @@ class DashboardController extends GetxController {
 
   handleAddNewAction() async {
     AppController.to.displayCircularProgressIndicator.value = true;
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
     AppController.to.displayCircularProgressIndicator.value = false;
     length.value += 1;
     handleSwitchToSearch();

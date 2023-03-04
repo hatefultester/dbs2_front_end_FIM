@@ -24,13 +24,13 @@ class HomePage extends StatelessWidget {
                 return const WebView();
               }
               if (sizingInformation.deviceScreenType == DeviceScreenType.tablet) {
-                return const WebView();
+                return const TabletView();
               }
               if (sizingInformation.deviceScreenType == DeviceScreenType.mobile) {
                 return const MobileView();
               }
 
-              return const SizedBox.shrink();
+              return const TabletView();
             }
             ),
             ObxOnly(only: controller.displayCircularProgressIndicator,child: const SizedBox.expand(child: Center(child: CircularProgressIndicator())),),

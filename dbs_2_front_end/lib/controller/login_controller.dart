@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_material_pickers/helpers/show_date_picker.dart';
 import 'package:get/get.dart';
 
+import '../utils/menu_item.dart';
 import 'app_controller.dart';
 
 enum LoginViewState {
@@ -117,10 +118,16 @@ class LoginController extends GetxController {
         _resetTextEditingControllers();
         break;
       case LoginViewState.login:
+        if (emailTextController.text.isNotEmpty && passwordTextController.text.isNotEmpty) {
+          AppController.to.isUserLoggedIn.value = true;
+          AppController.to.handleMenuItemTapped(MenuItem.profile);
+        } else {
+          displayErrorLoginMessage.value = true;
+        }
         state.value = LoginViewState.login;
-        displayErrorLoginMessage.value = true;
         isLogin.value = true;
         _resetTextEditingControllers();
+
         break;
       case LoginViewState.forgotPassword:
         state.value = LoginViewState.login;

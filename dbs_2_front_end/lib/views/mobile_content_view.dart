@@ -10,7 +10,7 @@ class MobileContentView extends GetView<AppController> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.only(top: 12.0, bottom: 12),
       child: Obx(() => controller.selectedContent.value),
     );
   }
